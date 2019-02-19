@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
 
-project("cosc1337")
+project("DataStructures")
 
 add_subdirectory(Lab2)
