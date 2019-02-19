@@ -160,7 +160,6 @@ LinkedChar::~LinkedChar()
 void menuDisplay()
 {
 	std::cout << "LinkedChar Menu\n\n";
-//	std::cout << "[0] Enter a string and convert to LinkedChar\n";
 	std::cout << "[1] Get length of current LinkedChar\n";
 	std::cout << "[2] Find index of char in LinkedChar\n";
 	std::cout << "[3] Append AppendLinkedChar to LinkedChar\n";
@@ -183,18 +182,6 @@ int main()
 		std::cout << "\n\nEnter selection [1-5]: ";
 		std::cin >> choice;
 		std::cout << "\n";
-		/*		if (choice == 0)
-				{
-					std::cout << "Enter a string and convert to LinkedChar: ";
-					std::cin.ignore();
-					std::getline(std::cin, newstring);
-					std::cout << "\n";
-					LinkedChar currentlc(newstring);
-					currentlc.display();
-					std::cout << "\n\n";
-				}
-				else
-		*/
 		if (choice == 1)
 			std::cout << "Length of LinkedChar: " << currentlc.length() << "\n\n";
 		else if (choice == 2)
