@@ -60,6 +60,9 @@ LinkedChar::LinkedChar()
 
 LinkedChar::LinkedChar(std::string s)
 {
+	head = nullptr;
+	itemCount = 0;
+
 	for (int i = 0; i < s.length(); i++) 
 		add(s[i]);
 }
