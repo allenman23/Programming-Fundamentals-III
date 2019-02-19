@@ -62,7 +62,6 @@ LinkedChar::LinkedChar(std::string s)
 {
 	head = nullptr;
 	itemCount = 0;
-
 	for (int i = 0; i < s.length(); i++) 
 		add(s[i]);
 }
@@ -81,8 +80,6 @@ void LinkedChar::display()
 void LinkedChar::add(const char item) 
 {
 	Node * newNode = new Node(item);
-	//newNode->setNext(head);
-	//head = newNode;
 	if (head == nullptr)
 		head = newNode;
 	else 
@@ -99,6 +96,22 @@ int LinkedChar::length() const
 {
 	return itemCount;
 }
+
+int LinkedChar::index(char ch) const
+{
+	int lcindex = 0;
+	Node * curr = head;
+	while (curr != nullptr  && curr->getItem() != ch)
+	{
+		++lcindex;
+		curr = curr->getNext();
+	}
+	if (curr == nullptr)
+		return -1;
+	else
+		return lcindex;
+}
+
 
 void LinkedChar::append(const LinkedChar & lc) 
 {
@@ -123,27 +136,15 @@ bool LinkedChar::submatch(const LinkedChar & lc) const
 			lcPtr = lcPtr->getNext();
 			subPtr = subPtr->getNext();
 		}
-		else if (lc.head->getItem() == lcPtr->getItem()) // no match but sub.head matches lcPtr->getItem (don't move lcPtr and reset subPtr)
+		else if (lc.head->getItem() == lcPtr->getItem()) // no match but sub.head matches lcPtr->getItem (reset subPtr and don't move lcPtr)
 			subPtr = lc.head;
-		else // no match and sub.head doesn't match lcPtr->getItem (move lcPtr)
+		else // no match and sub.head doesn't match lcPtr->getItem (reset subPtr and move lcPtr)
+		{
+			subPtr = lc.head;
 			lcPtr = lcPtr->getNext();
+		}
 	}
 	return false;
-}
-
-int LinkedChar::index(char ch) const 
-{
-		int lcindex = 1;
-		Node * curr = head;
-		while (curr != nullptr  && curr->getItem() != ch) 
-		{
-			++lcindex;
-			curr = curr->getNext();
-		}
-		if (curr == nullptr)
-			return -1;
-		else
-			return lcindex;
 }
 
 LinkedChar::~LinkedChar() 
@@ -201,7 +202,7 @@ int main()
 			char charsearch;
 			std::cout << "Enter char to search for: ";
 			std::cin >> charsearch;
-			std::cout << "\nIndex of char in LinkedChar (starting from 1): " << currentlc.index(charsearch) << "\n\n";
+			std::cout << "\nIndex of char in LinkedChar (starting from 0): " << currentlc.index(charsearch) << "\n\n";
 		}
 		else if (choice == 3)
 		{
