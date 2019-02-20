@@ -127,6 +127,8 @@ bool LinkedChar::submatch(const LinkedChar & lc) const
 {
 	Node* lcPtr = head;
 	Node* subPtr = lc.head;
+	if (subPtr == nullptr)
+		return false;
 	while (lcPtr != nullptr)
 	{
 		if (lcPtr->getItem() == subPtr->getItem() && subPtr->getNext() == nullptr) // match and end of sub (submatch is true)
