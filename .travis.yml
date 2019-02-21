@@ -23,4 +23,3 @@ script:
   - mkdir build
   - cd build
   - cmake -std=gnu++11 -DCMAKE_CXX_COMPILER=$COMPILER .. && make
-  - ./Lab1/maxarray 
