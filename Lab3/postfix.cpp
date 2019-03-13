@@ -78,45 +78,30 @@ LinkedStack::LinkedStack() : topPtr(nullptr)
 
 LinkedStack::LinkedStack(const LinkedStack& aStack)
 {
-	// Point to nodes in original chain
 	Node* origChainPtr = aStack.topPtr;
 
 	if (origChainPtr == nullptr)
-		topPtr = nullptr;  // Original stack is empty
+		topPtr = nullptr;
 	else
 	{
-		// Copy first node
 		topPtr = new Node();
 		topPtr->setItem(origChainPtr->getItem());
 
-		// Point to last node in new chain
 		Node* newChainPtr = topPtr;
 
-		// Advance original-chain pointer
 		origChainPtr = origChainPtr->getNext();
 
-		// Copy remaining nodes
 		while (origChainPtr != nullptr)
 		{
-			// Get next item from original chain
 			int nextItem = origChainPtr->getItem();
-
-			// Create a new node containing the next item
 			Node* newNodePtr = new Node(nextItem);
-
-			// Link new node to end of new chain
 			newChainPtr->setNext(newNodePtr);
-
-			// Advance pointer to new last node
 			newChainPtr = newChainPtr->getNext();
-
-			// Advance original-chain pointer
 			origChainPtr = origChainPtr->getNext();
-		}  // end while
-
-		newChainPtr->setNext(nullptr);               // Flag end of chain
-	}  // end if
-}  // end copy constructor
+		}
+		newChainPtr->setNext(nullptr);
+	}
+}
 
 LinkedStack::~LinkedStack()
 {
@@ -142,11 +127,8 @@ bool LinkedStack::pop()
 	bool result = false;
 	if (!isEmpty())
 	{
-		// Stack is not empty; delete top
 		Node* nodeToDeletePtr = topPtr;
 		topPtr = topPtr->getNext();
-
-		// Return deleted node to system
 		nodeToDeletePtr->setNext(nullptr);
 		delete nodeToDeletePtr;
 		nodeToDeletePtr = nullptr;
@@ -221,6 +203,5 @@ int main()
 	std::cout << string1 << " = " << evalPostfix(string1) << "\n\n";
 	string1 = "12*34*+";
 	std::cout << string1 << " = " << evalPostfix(string1) << "\n\n";
-	std::cin >> string1;
 	return 0;
 }
