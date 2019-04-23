@@ -4,8 +4,8 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-//#include<random>
-//#include<ctime>
+#include<random>
+#include<chrono>
 
 template<class ItemType>
 class Node
@@ -46,7 +46,7 @@ public:
 	 @pre  None.
 	 @post  newEntry is in the list, and the list is sorted.
 	 @param newEntry  The entry to insert into the sorted list. */
-	virtual void insertSorted(const ItemType& newEntry) = 0;
+	virtual bool insertSorted(const ItemType& newEntry) = 0;
 
 	/** Removes the first or only occurrence of the given entry from this
 		sorted list.
@@ -97,24 +97,24 @@ template<class ItemType>
 class LinkedSortedList : public SortedListInterface<ItemType>
 {
 private:
-	Node<ItemType>* headPtr; // Pointer to first node in the chain
+	std::shared_ptr<Node<ItemType>> headPtr; // Pointer to first node in the chain
 	int itemCount; // Current count of list items
 // Locates the node that is before the node that should or does
 // contain the given entry.
 // @param anEntry The entry to find.
 // @return Either a pointer to the node before the node that contains
 // or should contain the given entry, or nullptr if no prior node exists. 
-	Node<ItemType>* getNodeBefore(const ItemType& anEntry) const;
+	std::shared_ptr<Node<ItemType>> getNodeBefore(const ItemType& anEntry) const;
 // Locates the node at a given position within the chain.
-	Node<ItemType>* getNodeAt(int position) const;
+	std::shared_ptr<Node<ItemType>> getNodeAt(int position) const;
 // Returns a pointer to a copy of the chain to which origChainPtr points.
-	Node<ItemType>* copyChain(const Node<ItemType>* origChainPtr);
+	std::shared_ptr<Node<ItemType>> copyChain(const std::shared_ptr<Node<ItemType>> origChainPtr);
 
 public:
 	LinkedSortedList();
 	LinkedSortedList(const LinkedSortedList<ItemType>& aList);
 	virtual ~LinkedSortedList();
-	void insertSorted(const ItemType& newEntry);
+	bool insertSorted(const ItemType& newEntry);
 	bool removeSorted(const ItemType& anEntry);
 	int getPosition(const ItemType& newEntry) const;
 // The following methods are the same as given in ListInterface:
@@ -122,14 +122,16 @@ public:
 	int getLength() const;
 	bool remove(int position);
 	void clear();
-	ItemType getEntry(int position)/* const throw(PrecondViolatedExcep)*/;
+	ItemType getEntry(int position) const; /*throw(PrecondViolatedExcep)*/
 };
 
 template<class ItemType>
-Node<ItemType>* LinkedSortedList<ItemType>::getNodeBefore(const ItemType& anEntry) const
+std::shared_ptr<Node<ItemType>> LinkedSortedList<ItemType>::getNodeBefore(const ItemType& anEntry) const
 {
-	Node<ItemType>* curPtr = headPtr;
-	Node<ItemType>* prevPtr = nullptr;
+	std::shared_ptr<Node<ItemType>> curPtr = std::make_shared<Node<ItemType>>();
+	curPtr = headPtr;
+	std::shared_ptr<Node<ItemType>> prevPtr = std::make_shared<Node<ItemType>>();
+	prevPtr = nullptr;
 	while ( (curPtr != nullptr) && (anEntry > curPtr->getItem()) ) 
 	{
 		prevPtr = curPtr;
@@ -139,18 +141,19 @@ Node<ItemType>* LinkedSortedList<ItemType>::getNodeBefore(const ItemType& anEntr
 } // end getNodeBefore
 
 template<class ItemType>
-Node<ItemType>* LinkedSortedList<ItemType>::getNodeAt(int position) const
+std::shared_ptr<Node<ItemType>> LinkedSortedList<ItemType>::getNodeAt(int position) const
 {
-	Node<ItemType>* curPtr = headPtr;
+	std::shared_ptr<Node<ItemType>> curPtr = std::make_shared<Node<ItemType>>();
+	curPtr = headPtr;
 	for (int i = 1; i < position; i++)
 		curPtr = curPtr->getNext();
 	return curPtr;
 }
 
 template<class ItemType>
-Node<ItemType>* LinkedSortedList<ItemType>::copyChain(const Node<ItemType>* origChainPtr)
+std::shared_ptr<Node<ItemType>> LinkedSortedList<ItemType>::copyChain(const std::shared_ptr<Node<ItemType>> origChainPtr)
 {
-	Node<ItemType>* copiedChainPtr;
+	std::shared_ptr<Node<ItemType>> copiedChainPtr = std::make_shared<Node<ItemType>>();
 	if (origChainPtr == nullptr)
 	{
 	copiedChainPtr = nullptr;
@@ -158,7 +161,7 @@ Node<ItemType>* LinkedSortedList<ItemType>::copyChain(const Node<ItemType>* orig
 	}
 	else
 	{
-		Node<ItemType>* copiedChainPtr = new Node<ItemType>(origChainPtr->getItem());
+		copiedChainPtr = origChainPtr->getItem();
 		copiedChainPtr->setNext(copyChain(origChainPtr->getNext()));
 		itemCount++; 
 	} // end if
@@ -166,13 +169,14 @@ Node<ItemType>* LinkedSortedList<ItemType>::copyChain(const Node<ItemType>* orig
 } // end copyChain
 
 template<class ItemType>
-LinkedSortedList<ItemType>::LinkedSortedList() : headPtr(nullptr), itemCount(0)
+LinkedSortedList<ItemType>::LinkedSortedList()
 {
+	headPtr = std::make_shared<Node<ItemType>>();
+	itemCount = 0;
 }
 
 template<class ItemType>
-LinkedSortedList<ItemType>::
-LinkedSortedList(const LinkedSortedList<ItemType>& aList) 
+LinkedSortedList<ItemType>::LinkedSortedList(const LinkedSortedList<ItemType>& aList) 
 {
 	headPtr = copyChain(aList.headPtr); 
 }
@@ -184,31 +188,39 @@ LinkedSortedList<ItemType>::~LinkedSortedList()
 }
 
 template<class ItemType>
-void LinkedSortedList<ItemType>::insertSorted(const ItemType& newEntry)
+bool LinkedSortedList<ItemType>::insertSorted(const ItemType& newEntry)
 {
-	Node<ItemType>* newNodePtr = new Node<ItemType>(newEntry);
-	Node<ItemType>* prevPtr = getNodeBefore(newEntry);
+	std::shared_ptr<Node<ItemType>> newNodePtr = std::make_shared<Node<ItemType>>();
+	newNodePtr->setItem(newEntry);
+	std::shared_ptr<Node<ItemType>> prevPtr = std::make_shared<Node<ItemType>>();
+	prevPtr = getNodeBefore(newEntry);
 	if (isEmpty() || (prevPtr == nullptr)) // Add at beginning 
 	{
+//		std::cout << "previous node is null ";
    		newNodePtr->setNext(headPtr);
 		headPtr = newNodePtr;
 	}
 	else // Add after node before
 	{
-		Node<ItemType>* aftPtr = prevPtr->getNext();
+//		std::cout << " item: '" << newNodePtr->getItem() << "'";
+		std::shared_ptr<Node<ItemType>> aftPtr = std::make_shared<Node<ItemType>>();
+		aftPtr = prevPtr->getNext();
 		newNodePtr->setNext(aftPtr);
 		prevPtr->setNext(newNodePtr);
 	} // end if
 	itemCount++;
+	return true;
 } // end insertSorted
 
 template<class ItemType>
 bool LinkedSortedList<ItemType>::removeSorted(const ItemType & anEntry)
 {
-	if (getPosition >= 1)
+	if (getPosition(anEntry) >= 1)
 	{
-		Node<ItemType>* prevPtr = getNodeBefore(anEntry);
-		Node<ItemType>* curPtr = prevPtr->getNext();
+		std::shared_ptr<Node<ItemType>> prevPtr = std::make_shared<Node<ItemType>>();
+		prevPtr = getNodeBefore(anEntry);
+		std::shared_ptr<Node<ItemType>> curPtr = std::make_shared<Node<ItemType>>();
+		curPtr = prevPtr->getNext();
 		curPtr = curPtr->getNext();
 		prevPtr->setNext(curPtr);
 		itemCount--;
@@ -221,7 +233,8 @@ bool LinkedSortedList<ItemType>::removeSorted(const ItemType & anEntry)
 template<class ItemType>
 int LinkedSortedList<ItemType>::getPosition(const ItemType & newEntry) const
 {
-	Node<ItemType>* curPtr = headPtr;
+	std::shared_ptr<Node<ItemType>> curPtr = std::make_shared<Node<ItemType>>();
+	curPtr = headPtr;
 	int position = 1;
 	while (curPtr != nullptr && curPtr->getItem() != newEntry)
 	{
@@ -285,7 +298,7 @@ void LinkedSortedList<ItemType>::clear()
 }
 
 template<class ItemType>
-ItemType LinkedSortedList<ItemType>::getEntry(int position) // const throw(PrecondViolatedExcep)
+ItemType LinkedSortedList<ItemType>::getEntry(int position) const //throw(PrecondViolatedExcep)
 {
    // Enforce precondition
    bool ableToGet = (position >= 1) && (position <= itemCount);
@@ -303,23 +316,53 @@ ItemType LinkedSortedList<ItemType>::getEntry(int position) // const throw(Preco
 }
 
 template<class ItemType>
-void displaySortedList(SortedListInterface<ItemType>& sli)
+void displayLinkedSortedList(std::shared_ptr<SortedListInterface<ItemType>> sli)
 {
 	std::cout << "list: ";
-	for (int i = 1; i <= sli.getLength(); i++)
+	for (int i = 1; i <= sli->getLength(); i++)
 	{
-		std::cout << sli.getEntry(i) << " ";
+		std::cout << sli->getEntry(i) << " ";
 	}
+	std::cout << "\n";
 }
 
 int main()
 {
-	LinkedSortedList<int> nums;
-	nums.insertSorted(9);
-	nums.insertSorted(7);
-	nums.insertSorted(1);
-	nums.insertSorted(10);
-	nums.insertSorted(5);
-	displaySortedList(nums);
+	
+	std::shared_ptr<SortedListInterface<int>> numbers;
+	numbers = std::make_shared<LinkedSortedList<int>>();
+/*	numbers->insertSorted(4);
+	displayLinkedSortedList(numbers);
+	numbers->insertSorted(6);
+	displayLinkedSortedList(numbers);
+	numbers->insertSorted(2);
+	displayLinkedSortedList(numbers);
+	numbers->insertSorted(3);
+	displayLinkedSortedList(numbers);
+	numbers->removeSorted(4);
+	displayLinkedSortedList(numbers);
+	numbers->insertSorted(5);
+	displayLinkedSortedList(numbers);
+*/
+
+	// construct a trivial random generator engine from a time-based seed:
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	std::default_random_engine generator(seed);
+
+	std::uniform_int_distribution<int> distribution(1, 100);
+	int num;
+	for (int i = 0; i < 21; ++i)
+	{
+		//		std::cout << distribution(generator) << " ";
+		num = distribution(generator);
+		std::cout << "inserting " << num << "\n";
+		numbers->insertSorted(num);
+		displayLinkedSortedList(numbers);
+		std::cout << "\n";
+	}
+	std::cout << "removing " << num << "\n";
+	numbers->removeSorted(num);
+	displayLinkedSortedList(numbers);
+
 	return 0;
 }
