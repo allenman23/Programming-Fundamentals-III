@@ -272,41 +272,16 @@ void displayLinkedSortedList(std::shared_ptr<SortedListInterface<ItemType>> sli)
 
 int main()
 {
-	
 	std::shared_ptr<SortedListInterface<int>> numbers;
 	numbers = std::make_shared<LinkedSortedList<int>>();
+	int num;
 
-	numbers->insertSorted(4);
-	displayLinkedSortedList(numbers);
-	numbers->insertSorted(6);
-	displayLinkedSortedList(numbers);
-	numbers->insertSorted(2);
-	displayLinkedSortedList(numbers);
-	numbers->insertSorted(3);
-	displayLinkedSortedList(numbers);
-	numbers->insertSorted(5);
-	displayLinkedSortedList(numbers);
-	numbers->insertSorted(9);
-	displayLinkedSortedList(numbers);
-	numbers->removeSorted(4);
-	displayLinkedSortedList(numbers);
-	numbers->removeSorted(5);
-	displayLinkedSortedList(numbers);
-	numbers->removeSorted(2);
-	displayLinkedSortedList(numbers);
-	numbers->removeSorted(9);
-	displayLinkedSortedList(numbers);
-
-
-/*
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	std::default_random_engine generator(seed);
-
 	std::uniform_int_distribution<int> distribution(1, 100);
-	int num;
+
 	for (int i = 0; i < 21; ++i)
 	{
-		//		std::cout << distribution(generator) << " ";
 		num = distribution(generator);
 		std::cout << "inserting " << num << "\n";
 		numbers->insertSorted(num);
@@ -316,6 +291,5 @@ int main()
 	std::cout << "removing " << num << "\n";
 	numbers->removeSorted(num);
 	displayLinkedSortedList(numbers);
-*/
 	return 0;
 }
