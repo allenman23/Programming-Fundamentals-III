@@ -788,8 +788,8 @@ bool BinarySearchTree<ItemType>::contains(const ItemType & anEntry) const
 		return true;
 }
 
-
-void display(int& anItem)
+template<class ItemType>
+void display(ItemType& anItem)
 {
 	std::cout << anItem << " ";
 }  // end display
