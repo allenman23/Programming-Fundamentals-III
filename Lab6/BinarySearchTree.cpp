@@ -1,5 +1,7 @@
 #include <memory>
 #include <iostream>
+#include "PrecondViolatedExcep.h"
+#include "NotFoundException.h"
 #include "BinaryNodeTree.h" 
 #include "BinaryNode.h" 
 #include "BinarySearchTree.h"
@@ -121,6 +123,10 @@ std::shared_ptr<BinaryNode<ItemType>> BinarySearchTree<ItemType>::findNode(std::
 template<class ItemType>
 void BinarySearchTree<ItemType>::setRootData(const ItemType & newData) const
 {
+	if (isEmpty())
+		this->rootPtr = std::make_shared<BinaryNode<ItemType>>(newData, nullptr, nullptr);
+	else
+		this->rootPtr->setItem(newData);
 }
 
 template<class ItemType>
@@ -142,7 +148,13 @@ bool BinarySearchTree<ItemType>::remove(const ItemType & anEntry)
 template<class ItemType>
 ItemType BinarySearchTree<ItemType>::getEntry(const ItemType & anEntry) const
 {
-	return ItemType();
+	bool isSuccessful = false;
+	auto binaryNodePtr = findNode(this->rootPtr, anEntry);
+
+	if (isSuccessful)
+		return binaryNodePtr->getItem();
+	else
+		throw NotFoundException("Entry not found in tree!");
 }
 
 template<class ItemType>
