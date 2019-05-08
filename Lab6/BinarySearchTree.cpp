@@ -1,4 +1,5 @@
 #include <memory>
+#include <iostream>
 #include "BinaryNodeTree.h" 
 #include "BinaryNode.h" 
 #include "BinarySearchTree.h"
