@@ -124,7 +124,7 @@ template<class ItemType>
 void BinarySearchTree<ItemType>::setRootData(const ItemType & newData) const
 {
 	if (this->isEmpty())
-		rootPtr = std::make_shared<BinaryNode<ItemType>>(newData, nullptr, nullptr);
+		this->rootPtr = std::make_shared<BinaryNode<ItemType>>(newData, nullptr, nullptr);
 	else
 		this->rootPtr->setItem(newData);
 }
