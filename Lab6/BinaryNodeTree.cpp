@@ -6,6 +6,7 @@
 #include "BinaryNodeTree.h" 
 #include "BinaryNode.h" 
 #include <iostream>
+#include <algorithm>
 
 //////////////////////////////////////////////////////////////
 //      Protected Utility Methods Section
@@ -373,5 +374,3 @@ BinaryNodeTree<ItemType>& BinaryNodeTree<ItemType>::operator=(
    this = copyTree(&rightHandSide);
    return *this;
 }  // end operator=
-
-

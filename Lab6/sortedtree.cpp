@@ -21,7 +21,8 @@ void display(int& anItem)
 
 int main()
 {   /*
-	auto tree1 = std::make_shared<BinarySearchTree<int>>();
+	std::shared_ptr<BinaryTreeInterface<int>> tree1;
+	tree1 = std::make_shared<BinarySearchTree<int>>();
 
 	int num = 5;
 	
@@ -87,6 +88,6 @@ int main()
 	std::cout << "Tree(inorder): ";
 	tree1->inorderTraverse(display);
 	std::cout << "\n";
-*/
+	*/
 	return 0;
 }

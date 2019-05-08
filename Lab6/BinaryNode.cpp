@@ -63,4 +63,3 @@ std::shared_ptr<BinaryNode<ItemType>> BinaryNode<ItemType>::getRightChildPtr() c
 	return rightChildPtr;
 }  // end getRightChildPtr		
 
-

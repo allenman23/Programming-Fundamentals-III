@@ -685,35 +685,32 @@ std::shared_ptr<BinaryNode<ItemType>> BinarySearchTree<ItemType>::removeValue(st
 template<class ItemType>
 std::shared_ptr<BinaryNode<ItemType>> BinarySearchTree<ItemType>::removeNode(std::shared_ptr<BinaryNode<ItemType>> nodePtr)
 {
-	auto nodeToConnectPtr = std::make_shared<BinaryNode<ItemType>>();
-	auto tempPtr = std::make_shared<BinaryNode<ItemType>>();
 	bool leftNull, rightNull, leftOnly, rightOnly;
 	leftNull = nodePtr->getLeftChildPtr() == nullptr;
 	rightNull = nodePtr->getRightChildPtr() == nullptr;
 	leftOnly = !leftNull && rightNull;
 	rightOnly = leftNull && !rightNull;
-	ItemType newNodeValue;
 	if (leftNull && rightNull)
 	{
-		std::cout << "removed leaf\n";
-		return nullptr;
+		nodePtr = nullptr;
+		return nodePtr;
 	}
 	else if (leftOnly || rightOnly)
 	{
+		auto nodeToConnectPtr = std::make_shared<BinaryNode<ItemType>>();
 		if (leftOnly)
 			nodeToConnectPtr = nodePtr->getLeftChildPtr();
 		else
 			nodeToConnectPtr = nodePtr->getRightChildPtr();
-		std::cout << "removed with 1 child\n";
-
+		nodePtr = nullptr;
 		return nodeToConnectPtr;
 	}
 	else
 	{
-		tempPtr = removeLeftmostNode(nodePtr->getRightChildPtr(), newNodeValue);
+		ItemType newNodeValue;
+		auto tempPtr = removeLeftmostNode(nodePtr->getRightChildPtr(), newNodeValue);
 		nodePtr->setRightChildPtr(tempPtr);
 		nodePtr->setItem(newNodeValue);
-		std::cout << "removed with 2 kids\n";
 		return nodePtr;
 	}
 }
@@ -722,7 +719,6 @@ template<class ItemType>
 std::shared_ptr<BinaryNode<ItemType>> BinarySearchTree<ItemType>::removeLeftmostNode(std::shared_ptr<BinaryNode<ItemType>> subTreePtr,
 	ItemType & inorderSuccessor)
 {
-	auto tempPtr = std::make_shared<BinaryNode<ItemType>>();
 	if (subTreePtr->getLeftChildPtr() == nullptr)
 	{
 		inorderSuccessor = subTreePtr->getItem();
@@ -730,7 +726,7 @@ std::shared_ptr<BinaryNode<ItemType>> BinarySearchTree<ItemType>::removeLeftmost
 	}
 	else
 	{
-		tempPtr = removeLeftmostNode(subTreePtr->getLeftChildPtr(), inorderSuccessor);
+		auto tempPtr = removeLeftmostNode(subTreePtr->getLeftChildPtr(), inorderSuccessor);
 		subTreePtr->setLeftChildPtr(tempPtr);
 		return subTreePtr;
 	}
@@ -753,10 +749,7 @@ std::shared_ptr<BinaryNode<ItemType>> BinarySearchTree<ItemType>::findNode(std::
 template<class ItemType>
 void BinarySearchTree<ItemType>::setRootData(const ItemType & newData) const
 {
-	if (this->isEmpty())
-		this->rootPtr = std::make_shared<BinaryNode<ItemType>>(newData, nullptr, nullptr);
-	else
-		this->rootPtr->setItem(newData);
+	throw PrecondViolatedExcep("Illegal function call. Cannot setRootData in a Binary Search Tree");
 }
 
 template<class ItemType>
@@ -771,17 +764,16 @@ template<class ItemType>
 bool BinarySearchTree<ItemType>::remove(const ItemType & anEntry)
 {
 	bool removeSuccess;
-	removeValue(this->rootPtr, anEntry, removeSuccess);
+	this->rootPtr = removeValue(this->rootPtr, anEntry, removeSuccess);
 	return removeSuccess;
 }
 
 template<class ItemType>
 ItemType BinarySearchTree<ItemType>::getEntry(const ItemType & anEntry) const
 {
-	bool isSuccessful = false;
 	auto binaryNodePtr = findNode(this->rootPtr, anEntry);
 
-	if (isSuccessful)
+	if (binaryNodePtr != nullptr)
 		return binaryNodePtr->getItem();
 	else
 		throw NotFoundException("Entry not found in tree!");
@@ -802,20 +794,11 @@ void display(int& anItem)
 	std::cout << anItem << " ";
 }  // end display
 
-void check(bool success)
-{
-	if (success)
-		std::cout << "Done." << std::endl;
-	else
-		std::cout << " Entry not in tree." << std::endl;
-}  // end check
-
 int main()
 {
 	auto tree1 = std::make_shared<BinarySearchTree<int>>();
-
 	int num = 5;
-/*
+
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	std::default_random_engine generator(seed);
 	std::uniform_int_distribution<int> distribution(1, 100);
@@ -826,58 +809,14 @@ int main()
 		std::cout << "inserting " << num << "\n";
 		tree1->add(num);
 	}
-*/
-	tree1->add(20);
-	tree1->add(10);
-	tree1->add(5);
-	tree1->add(15);
-	tree1->add(30);
-	tree1->add(25);
-	tree1->add(35);
+	std::cout << "\n";
 	std::cout << "Tree(inorder): ";
 	tree1->inorderTraverse(display);
 	std::cout << "\n";
-	std::cout << "removing " << num << "\n";
+	std::cout << "\nremoving " << num << "\n";
 	tree1->remove(num);
-	std::cout << "Tree(inorder): ";
+	std::cout << "\nTree(inorder): ";
 	tree1->inorderTraverse(display);
 	std::cout << "\n";
-
-	std::cout << "removing 20\n";
-	tree1->remove(20);
-	std::cout << "Tree(inorder): ";
-	tree1->inorderTraverse(display);
-	std::cout << "\n";
-
-	std::cout << "removing 10\n";
-	tree1->remove(10);
-	std::cout << "Tree(inorder): ";
-	tree1->inorderTraverse(display);
-	std::cout << "\n";
-
-	std::cout << "removing 15\n";
-	tree1->remove(15);
-	std::cout << "Tree(inorder): ";
-	tree1->inorderTraverse(display);
-	std::cout << "\n";
-
-	std::cout << "removing 25\n";
-	tree1->remove(25);
-	std::cout << "Tree(inorder): ";
-	tree1->inorderTraverse(display);
-	std::cout << "\n";
-
-	std::cout << "removing 30\n";
-	tree1->remove(30);
-	std::cout << "Tree(inorder): ";
-	tree1->inorderTraverse(display);
-	std::cout << "\n";
-
-	std::cout << "removing 35\n";
-	tree1->remove(35);
-	std::cout << "Tree(inorder): ";
-	tree1->inorderTraverse(display);
-	std::cout << "\n";
-
 	return 0;
 }
